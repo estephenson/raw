@@ -126,8 +126,8 @@
     	var maxValue
 
     	if(sameScale()) {
-    		maxValue = d3.max(data, function(item) { 
-    			return d3.max(item.values, function(d) {  
+    		maxValue = d3.max(data, function(item) {
+    			return d3.max(item.values, function(d) {
     				return d.size; }); })
     	}
 
@@ -135,7 +135,7 @@
     	var allCategories = [];
     	var allColors = [];
     	data.forEach(function(item){
-    		
+
     		var temp_categories = item.values.map(function(val){
     			return val.category;
     		})

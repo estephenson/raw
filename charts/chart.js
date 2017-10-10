@@ -9,13 +9,13 @@
 	// X axis dimension
 	// Adding a title to be displayed in the UI
  	// and limiting the type of data to Numbers only
-	var x = model.dimension() 
+	var x = model.dimension()
 		.title('X Axis')
 		.types(Number)
 
 	// Y axis dimension
 	// Same as X
-	var y = model.dimension() 
+	var y = model.dimension()
 		.title('Y Axis')
 		.types(Number)
 
@@ -31,7 +31,7 @@
 		})
 	})
 
-	
+
 	// The Chart
 
 	var chart = raw.chart()

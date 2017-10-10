@@ -151,6 +151,7 @@ angular.module('raw.directives', [])
 													scope.chart.isDrawing(true)
                    				scope.$apply()
                   	}
+							console.log(scope.chart)
 									})
 									.on('endDrawing', function(){
 										$rootScope.$broadcast("completeGraph");
@@ -597,6 +598,7 @@ angular.module('raw.directives', [])
   };
 })
 
+// THIS IS THE SECTION I CARE ABOUT (SVG)
 .directive('coder', function () {
   return {
     restrict: 'EA',
@@ -611,6 +613,7 @@ angular.module('raw.directives', [])
         	.node().parentNode.innerHTML;
 
     		element.find('textarea').val(svgCode)
+		// element.find('textarea').val("SOME SILLY CODE HERE")
     	})
 
       /*function asHTML(){
@@ -628,6 +631,8 @@ angular.module('raw.directives', [])
     }
   };
 })
+
+//ANOTHER SECTION I CARE ABOUT
 
 .directive('downloader', function () {
     return {
@@ -732,10 +737,66 @@ angular.module('raw.directives', [])
         saveAs(blob, (scope.filename || element.find('input').attr("placeholder")) + ".json")
       }
 
+/*.directive('coder', function () {
+  return {
+    restrict: 'EA',
+    template :  '<textarea id="source" readonly class="source-area" rows="4" ng-model="svgCode"></textarea>',
+    link: function postLink(scope, element, attrs) {
+
+    	scope.$on('completeGraph',function(){
+
+				var svgCode = d3.select('#chart > svg')
+					.attr("version", 1.1)
+        	.attr("xmlns", "http://www.w3.org/2000/svg")
+        	.node().parentNode.innerHTML;
+
+    		element.find('textarea').val(svgCode)
+		// element.find('textarea').val("SOME SILLY CODE HERE")
+    	})
+*/
+
+		//this is the method that will actually download the d3 code for us.
+		var downloadD3 = function() {
+			// var svgCode = d3.select('#chart > svg > g')
+			// 	.attr("version", 1.1)
+			// 	.attr("xmlns", "http://www.w3.org/2000/svg")
+			// 	.node().parentNode;
+			// // console.log(svgCode);
+			var chartTitle = d3.select('#chart');
+			// console.log(chartTitle)
+			console.log(scope)
+
+			// var someJavascript = `	chart.draw(function (selection, data){
+			//
+			// 		// svg size
+			// 		selection
+			// 			.attr("width", width())
+			// 			.attr("height", height())
+			//
+			// 		// x and y scale
+			// 		var xScale = d3.scale.linear().domain([0, d3.max(data, function (d){ return d.x; })]).range([margin(), width()-margin()]);
+			// 		var yScale = d3.scale.linear().domain([0, d3.max(data, function (d){ return d.y; })]).range([height()-margin(), margin()]);
+			//
+			// 		// let's plot the dots!
+			// 		selection.selectAll("circle")
+			// 			.data(data)
+			// 			.enter().append("circle")
+			// 			.attr("cx", function(d) { return xScale(d.x); })
+			// 			.attr("cy", function(d) { return yScale(d.y); })
+			// 			.attr("r", 5)
+			//
+			// 	})`
+			// var mystring = "hello";
+			var otherJavascript = downloadData.toString();
+			var blob = new Blob([otherJavascript], {type:'text/plain'});
+			saveAs(blob, (scope.filename || element.find('input').attr("placeholder")) + ".js")
+		}
+
       scope.modes = [
     		{ label : 'Vector graphics (svg)', download : downloadSvg },
     		{ label : 'Image (png)', download : downloadPng },
-    		{ label : 'Data model (json)', download : downloadData }
+    		{ label : 'Data model (json)', download : downloadData },
+			{ label: 'D3 code', download : downloadD3 }
     	]
     	//scope.mode = scope.modes[0]
 

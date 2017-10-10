@@ -440,10 +440,15 @@ angular.module('raw.controllers', [])
     }
 
     $scope.selectChart = function(chart){
+      console.log("HERE is the chart");
+      console.log($scope.chart.model());
+      console.log(chart);
+      console.log("chart prints")
       if (chart == $scope.chart) return;
       $scope.model.clear();
       $scope.chart = chart;
       $scope.model = $scope.chart.model();
+
     }
 
     function refreshScroll(){
