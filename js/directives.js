@@ -503,6 +503,7 @@ angular.module('raw.directives', [])
 
 
 .directive('rawTable', function () {
+  console.log("in directive");
   return {
     restrict: 'A',
     link: function postLink(scope, element, attrs) {
@@ -732,6 +733,7 @@ angular.module('raw.directives', [])
 }
 
       var downloadData = function() {
+			console.log(scope.model);
         var json = JSON.stringify(scope.model(scope.data));
         var blob = new Blob([json], { type: "data:text/json;charset=utf-8" });
         saveAs(blob, (scope.filename || element.find('input').attr("placeholder")) + ".json")
@@ -757,14 +759,8 @@ angular.module('raw.directives', [])
 
 		//this is the method that will actually download the d3 code for us.
 		var downloadD3 = function() {
-			// var svgCode = d3.select('#chart > svg > g')
-			// 	.attr("version", 1.1)
-			// 	.attr("xmlns", "http://www.w3.org/2000/svg")
-			// 	.node().parentNode;
-			// // console.log(svgCode);
-			var chartTitle = d3.select('#chart');
 			// console.log(chartTitle)
-			console.log(scope)
+			// console.log(scope);
 
 			// var someJavascript = `	chart.draw(function (selection, data){
 			//
@@ -787,7 +783,19 @@ angular.module('raw.directives', [])
 			//
 			// 	})`
 			// var mystring = "hello";
-			var otherJavascript = downloadData.toString();
+			// var otherJavascript = downloadData.toString();
+			// var otherJavascript = scope.model(scope.data);
+			// var otherJavascipt = scope.chart.title();
+			console.log("clicking the d3 download button");
+			var chartTitle = d3.select('#chart');
+			console.log(scope.chart.title()); //this prints out the name of the chart
+			console.log(scope);
+			console.log(scope.chart.draw());
+			console.log(scope.data);
+
+
+			// var otherJavascript = "hello";
+			var otherJavascript = scope.chart.draw();
 			var blob = new Blob([otherJavascript], {type:'text/plain'});
 			saveAs(blob, (scope.filename || element.find('input').attr("placeholder")) + ".js")
 		}
