@@ -733,7 +733,7 @@ angular.module('raw.directives', [])
 }
 
       var downloadData = function() {
-			console.log(scope.model);
+		console.log(scope.model);
         var json = JSON.stringify(scope.model(scope.data));
         var blob = new Blob([json], { type: "data:text/json;charset=utf-8" });
         saveAs(blob, (scope.filename || element.find('input').attr("placeholder")) + ".json")
@@ -756,57 +756,82 @@ angular.module('raw.directives', [])
 		// element.find('textarea').val("SOME SILLY CODE HERE")
     	})
 */
-
+		var findFileFromName = function(name) {
+			// console.log(name);
+			var sep_strings = name.split(" ");
+			var first = sep_strings[0].toLowerCase();
+			sep_strings[0] = first;
+			var final = "";
+			for (var i = 0; i<sep_strings.length; i++) {
+				final = final + sep_strings[i];
+			}
+			final = final + ".js";
+			return final;
+		}
 		//this is the method that will actually download the d3 code for us.
 		var downloadD3 = function() {
-			// console.log(chartTitle)
-			// console.log(scope);
+			//two main next steps: get the entire chart.js to print
 
-			// var someJavascript = `	chart.draw(function (selection, data){
-			//
-			// 		// svg size
-			// 		selection
-			// 			.attr("width", width())
-			// 			.attr("height", height())
-			//
-			// 		// x and y scale
-			// 		var xScale = d3.scale.linear().domain([0, d3.max(data, function (d){ return d.x; })]).range([margin(), width()-margin()]);
-			// 		var yScale = d3.scale.linear().domain([0, d3.max(data, function (d){ return d.y; })]).range([height()-margin(), margin()]);
-			//
-			// 		// let's plot the dots!
-			// 		selection.selectAll("circle")
-			// 			.data(data)
-			// 			.enter().append("circle")
-			// 			.attr("cx", function(d) { return xScale(d.x); })
-			// 			.attr("cy", function(d) { return yScale(d.y); })
-			// 			.attr("r", 5)
-			//
-			// 	})`
-			// var mystring = "hello";
-			// var otherJavascript = downloadData.toString();
-			// var otherJavascript = scope.model(scope.data);
-			// var otherJavascipt = scope.chart.title();
-			console.log("clicking the d3 download button");
-			var chartTitle = d3.select('#chart');
-			console.log(scope.chart.title()); //this prints out the name of the chart
+			console.log("chart lives here");
 			console.log(scope);
-			console.log(scope.chart.draw());
-			console.log(scope.data);
+			var filename = findFileFromName(scope.chart.title());
+			console.log(filename);
+			var chartPath = "../charts/" + filename;
+			var tempVariable = "";
+			$.getScript(chartPath, function(data) {
+				// console.log(data);
+				tempVariable = data;
+				// return data;
+			});
+			console.log(tempVariable);
+			// console.log(tempVariable);
+			// $.getScript( "ajax/test.js", function( data, textStatus, jqxhr ) {
+			//   console.log( data ); // Data returned
+			//   console.log( textStatus ); // Success
+			//   console.log( jqxhr.status ); // 200
+			//   console.log( "Load was performed." );
+			// });
+
+			// var getChart = $.getScript(chartPath);
+			// console.log(getChart);
 
 
-			// var otherJavascript = "hello";
-			var otherJavascript = scope.chart.draw();
-			var blob = new Blob([otherJavascript], {type:'text/plain'});
-			saveAs(blob, (scope.filename || element.find('input').attr("placeholder")) + ".js")
+			// console.log($.getScript(chartPath));
+			var dataText = "var data = " + JSON.stringify(scope.data);
+			var dataModel = "var modelText = " + JSON.stringify(scope.model(scope.data));
+			var drawFunction = "var draw = " + scope.chart.draw() + "\n\n" + "draw()";
+			var javascriptFunctions = "\n" + dataText + "\n\n" + dataModel + "\n\n" + drawFunction +"\n";
+			//create the HTML template
+			var htmlTemplate =
+			`<!DOCTYPE html>
+			<html>
+			 <head>
+			 <!-- This code assumes you have an internet connection. If you do not,
+			 you will need to replace the following two lines of code that begin with
+			 "script".
+			 Replace the first line with your local copy of the d3 library.
+			 Replace the second line with your local copy of raw.js. -->
+			    <script src="https://d3js.org/d3.v3.min.js"></script>
+				 <script src="http://www.science.smith.edu/~jcrouser/raw/lib/raw.js"></script>
+			 </head>
+			 <body>
+			 	<div class="chart" with="200" height="300" background-color="blue">
+			    <script>` + javascriptFunctions + "console.log('hello');" + `</script>
+				 </div>
+			 </body>
+			</html>`;
+
+			var blob = new Blob([htmlTemplate], {type:'text/plain'});
+			saveAs(blob, (scope.filename || element.find('input').attr("placeholder")) + ".html")
 		}
+		// <script src="`+ getChart +`"></script>
 
       scope.modes = [
     		{ label : 'Vector graphics (svg)', download : downloadSvg },
     		{ label : 'Image (png)', download : downloadPng },
     		{ label : 'Data model (json)', download : downloadData },
-			{ label: 'D3 code', download : downloadD3 }
+			{ label: 'HTML', download : downloadD3 }
     	]
-    	//scope.mode = scope.modes[0]
 
     }
   };
