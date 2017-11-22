@@ -599,7 +599,6 @@ angular.module('raw.directives', [])
   };
 })
 
-// THIS IS THE SECTION I CARE ABOUT (SVG)
 .directive('coder', function () {
   return {
     restrict: 'EA',
@@ -632,8 +631,6 @@ angular.module('raw.directives', [])
     }
   };
 })
-
-//ANOTHER SECTION I CARE ABOUT
 
 .directive('downloader', function () {
     return {
@@ -757,7 +754,6 @@ angular.module('raw.directives', [])
     	})
 */
 		var findFileFromName = function(name) {
-			// console.log(name);
 			var sep_strings = name.split(" ");
 			var first = sep_strings[0].toLowerCase();
 			sep_strings[0] = first;
@@ -768,61 +764,47 @@ angular.module('raw.directives', [])
 			final = final + ".js";
 			return final;
 		}
+
 		//this is the method that will actually download the d3 code for us.
 		var downloadD3 = function() {
 			//two main next steps: get the entire chart.js to print
 
-			console.log("chart lives here");
-			console.log(scope);
 			var filename = findFileFromName(scope.chart.title());
-			console.log(filename);
 			var chartPath = "../charts/" + filename;
-			var tempVariable = "";
 			$.getScript(chartPath, function(data) {
-				// console.log(data);
-				tempVariable = data;
-				// return data;
+				var dataText = "var data = " + JSON.stringify(scope.data);
+				var dataModel = "var modelText = " + JSON.stringify(scope.model(scope.data));
+				var chartingFunction = data;
+				var javascriptFunctions =
+					"\n" + dataText + ";\n\n" + dataModel + ";\n\n" + chartingFunction +"\n";
+
+				//create the HTML template
+				var htmlTemplate =
+				`<!DOCTYPE html>
+				<html>
+				 <head>
+				 <!-- This code assumes you have an internet connection. If you do not,
+				 you will need to replace the following two lines of code that begin with
+				 "script".
+				 Replace the first line with your local copy of the d3 library.
+				 Replace the second line with your local copy of raw.js. -->
+				    <script src="https://d3js.org/d3.v3.min.js"></script>
+					 <script src="http://www.science.smith.edu/~jcrouser/raw/lib/raw.js"></script>
+				 </head>
+				 <body>
+				 	<div class="chart" with="200" height="300" background-color="blue">
+				    <script>` + javascriptFunctions + `</script>
+					 </div>
+				 </body>
+				</html>`;
+
+				var blob = new Blob([htmlTemplate], {type:'text/plain'});
+				saveAs(blob, (scope.filename || element.find('input').attr("placeholder")) + ".html")
 			});
-			console.log(tempVariable);
-			// console.log(tempVariable);
-			// $.getScript( "ajax/test.js", function( data, textStatus, jqxhr ) {
-			//   console.log( data ); // Data returned
-			//   console.log( textStatus ); // Success
-			//   console.log( jqxhr.status ); // 200
-			//   console.log( "Load was performed." );
-			// });
-
-			// var getChart = $.getScript(chartPath);
-			// console.log(getChart);
 
 
-			// console.log($.getScript(chartPath));
-			var dataText = "var data = " + JSON.stringify(scope.data);
-			var dataModel = "var modelText = " + JSON.stringify(scope.model(scope.data));
-			var drawFunction = "var draw = " + scope.chart.draw() + "\n\n" + "draw()";
-			var javascriptFunctions = "\n" + dataText + "\n\n" + dataModel + "\n\n" + drawFunction +"\n";
-			//create the HTML template
-			var htmlTemplate =
-			`<!DOCTYPE html>
-			<html>
-			 <head>
-			 <!-- This code assumes you have an internet connection. If you do not,
-			 you will need to replace the following two lines of code that begin with
-			 "script".
-			 Replace the first line with your local copy of the d3 library.
-			 Replace the second line with your local copy of raw.js. -->
-			    <script src="https://d3js.org/d3.v3.min.js"></script>
-				 <script src="http://www.science.smith.edu/~jcrouser/raw/lib/raw.js"></script>
-			 </head>
-			 <body>
-			 	<div class="chart" with="200" height="300" background-color="blue">
-			    <script>` + javascriptFunctions + "console.log('hello');" + `</script>
-				 </div>
-			 </body>
-			</html>`;
-
-			var blob = new Blob([htmlTemplate], {type:'text/plain'});
-			saveAs(blob, (scope.filename || element.find('input').attr("placeholder")) + ".html")
+			// var drawFunction = "var draw = " + scope.chart.draw() + "\n\n" + "draw()";
+			// var javascriptFunctions = "\n" + dataText + "\n\n" + dataModel + "\n\n" + drawFunction +"\n";
 		}
 		// <script src="`+ getChart +`"></script>
 

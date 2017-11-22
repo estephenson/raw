@@ -39,7 +39,7 @@
 		.defaultValue(true)
 
 	chart.draw(function (selection, data){
-
+		console.log("WITHIN THE DRAW FUNCITON");
 		// Retrieving dimensions from model
 		var x = points.dimensions().get('x'),
 			y = points.dimensions().get('y');
