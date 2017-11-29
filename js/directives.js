@@ -756,6 +756,18 @@ angular.module('raw.directives', [])
 		/* This function extracts the d3 code for a specific chart when given the
 		title of the chart. */
 		var findFileFromName = function(name) {
+			if (name == "Alluvial Diagram") {
+				return "alluvial.js";
+			}
+			if (name == "Delaunay Triangulation") {
+				return "delaunay.js";
+			}
+			if (name == "Circle Packing") {
+				return "packing.js";
+			}
+			if (name == "Voronoi Tessellation") {
+				return "voronoi.js";
+			}
 			var sep_strings = name.split(" ");
 			var first = sep_strings[0].toLowerCase();
 			sep_strings[0] = first;
@@ -764,32 +776,14 @@ angular.module('raw.directives', [])
 				final = final + sep_strings[i];
 			}
 			final = final + ".js";
+
 			return final;
 		}
 
-		/* This function takes in a specific chart and its d3 code, and cleans
-		the code based on the type of chart. */
-		//ISSUE: these rely on whitespace. If the original code is changed (even to alter a space)
-		//this will no longer work
-		var replaceByName = function(chartName, data) {
-			console.log(chartName);
-			var toReplace = [];
-			var newText = [];
-			if (chartName == "Scatter Plot" || chartName == "Hexagonal Binning") {
-				// var regex = /^chart.draw.*$/m
-				toReplace = ["(function(){", "chart.draw(function (selection, data){", "selection", `	})
-
-			})();`]
-				newText = ["", "", `d3.select("body").append("svg")`, ""];
-			}
-			else if (chartName == "Box plot") {
-				toReplace = ["(function(){", "chart.draw(function(selection, data){", "selection", `  })
-
-
-
-				})();`]
-				newText = ["", "", `d3.select("body").append("svg")`, ""]
-			}
+		/* This function cleans the code of the chart. */
+		var cleanCode = function(chartName, data) {
+			var toReplace = [/^\(function\(\){/, /.*chart\.draw\(\s*function\s*\(\s*selection\s*\,\s*data\s*\){/, "selection", /\s*}\)\s*}\)\(\);/];
+			var newText = ["", "", `d3.select("body").append("svg")`, ""];
 
 			//loop through all replacements
 			for (var i=0; i<toReplace.length; i++) {
@@ -805,17 +799,7 @@ angular.module('raw.directives', [])
 			var chartPath = "../charts/" + filename;
 			$.getScript(chartPath, function(data) {
 				var dataModel = "var data = " + JSON.stringify(scope.model(scope.data));
-				// var chartingFunction = replaceByName(scope.chart.title(), data);
-				var chartingFunction = data.replace(/^\(function\(\){/, "");
-				var chartingFunction = chartingFunction.replace(/.*chart\.draw\(\s*function\s*\(\s*selection\s*\,\s*data\s*\){/, "");
-				//also need to replace Selection
-				var chartingFunction = chartingFunction.replace("selection", `d3.select("body").append("svg")`);
-				var chartingFunction = chartingFunction.replace(/\s*}\)\s*}\)\(\);/, "");
-				/*
-			})
-
-})();
-				*/
+				var chartingFunction = cleanCode(scope.chart.title(), data);
 				var javascriptFunctions =
 					"\n" + dataModel + ";\n\n" + chartingFunction +"\n";
 
@@ -842,10 +826,7 @@ angular.module('raw.directives', [])
 			});
 
 
-			// var drawFunction = "var draw = " + scope.chart.draw() + "\n\n" + "draw()";
-			// var javascriptFunctions = "\n" + dataText + "\n\n" + dataModel + "\n\n" + drawFunction +"\n";
 		}
-		// <script src="`+ getChart +`"></script>
 
       scope.modes = [
     		{ label : 'Vector graphics (svg)', download : downloadSvg },
