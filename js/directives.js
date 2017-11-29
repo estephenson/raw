@@ -805,9 +805,9 @@ angular.module('raw.directives', [])
 			var chartPath = "../charts/" + filename;
 			$.getScript(chartPath, function(data) {
 				var dataModel = "var data = " + JSON.stringify(scope.model(scope.data));
-				// var chartingFunction = replaceByName(scope.chart.title(), data);
-				var chartingFunction = data.replace(/^\(function\(\){/, "");
-				var chartingFunction = chartingFunction.replace(/.*chart\.draw\(\s*function\s*\(\s*selection\s*/, "");
+				var chartingFunction = replaceByName(scope.chart.title(), data);
+				// var chartingFunction = data.replace(/^\(function\(\){/, "");
+				// var chartingFunction = chartingFunction.replace(/.*chart\.draw\(\s*function\s*\(\s*selection\s*/, "");
 				//chart.draw(function (selection, data){
 				var javascriptFunctions =
 					"\n" + dataModel + ";\n\n" + chartingFunction +"\n";
