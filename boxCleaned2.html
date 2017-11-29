@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+				<html>
+				 <head>
+				 <!-- This code assumes you have an internet connection. If you do not,
+				 you will need to replace the following two lines of code that begin with
+				 "script".
+				 Replace the first line with your local copy of the d3 library.
+				 Replace the second line with your local copy of raw.js. -->
+				    <script src="https://d3js.org/d3.v3.min.js"></script>
+					 <script src="http://www.science.smith.edu/~jcrouser/raw/lib/raw.js"></script>
+					 <script type="text/javascript" src="bower_components/d3-plugins/box/box.js"></script>
+				 </head>
+				 <body>
+				    <script>
+var data = [{"key":"Action","values":[{"Movie":"Avatar","Genre":"Action","Production Budget (millions)":"237","Box Office (millions)":"2784","ROI":"11.7","Rating IMDB":"8.0"},{"Movie":"Iron Man 3","Genre":"Action","Production Budget (millions)":"178","Box Office (millions)":"1215","ROI":"6.8","Rating IMDB":"7.6"},{"Movie":"Jurassic Park","Genre":"Action","Production Budget (millions)":"53","Box Office (millions)":"1030","ROI":"19.4","Rating IMDB":"8.0"},{"Movie":"Quantum of Solace","Genre":"Action","Production Budget (millions)":"200","Box Office (millions)":"586","ROI":"2.9","Rating IMDB":"6.7"},{"Movie":"The Dark Knight","Genre":"Action","Production Budget (millions)":"185","Box Office (millions)":"1005","ROI":"5.4","Rating IMDB":"9.0"},{"Movie":"The War of the Worlds","Genre":"Action","Production Budget (millions)":"132","Box Office (millions)":"704","ROI":"5.3","Rating IMDB":"6.5"},{"Movie":"X-Men: The Last Stand","Genre":"Action","Production Budget (millions)":"210","Box Office (millions)":"459","ROI":"2.2","Rating IMDB":"6.8"}]},{"key":"Drama","values":[{"Movie":"ET: The Extra-Terrestrial","Genre":"Drama","Production Budget (millions)":"11","Box Office (millions)":"793","ROI":"75.5","Rating IMDB":"7.9"},{"Movie":"The Blind Side","Genre":"Drama","Production Budget (millions)":"29","Box Office (millions)":"309","ROI":"10.7","Rating IMDB":"7.6"},{"Movie":"The Twilight Saga: New Moon","Genre":"Drama","Production Budget (millions)":"50","Box Office (millions)":"710","ROI":"14.2","Rating IMDB":"4.5"},{"Movie":"The Vow","Genre":"Drama","Production Budget (millions)":"30","Box Office (millions)":"196","ROI":"6.5","Rating IMDB":"6.7"},{"Movie":"You've Got Mail","Genre":"Drama","Production Budget (millions)":"65","Box Office (millions)":"251","ROI":"3.9","Rating IMDB":"6.3"}]},{"key":"Adventure","values":[{"Movie":"Finding Nemo","Genre":"Adventure","Production Budget (millions)":"94","Box Office (millions)":"940","ROI":"10.0","Rating IMDB":"8.1"},{"Movie":"King Kong","Genre":"Adventure","Production Budget (millions)":"207","Box Office (millions)":"551","ROI":"2.7","Rating IMDB":"7.3"},{"Movie":"Monsters, Inc.","Genre":"Adventure","Production Budget (millions)":"115","Box Office (millions)":"577","ROI":"5.0","Rating IMDB":"8.0"},{"Movie":"Oz the Great and Powerful","Genre":"Adventure","Production Budget (millions)":"160","Box Office (millions)":"493","ROI":"3.1","Rating IMDB":"6.6"},{"Movie":"Pirates of the Caribbean: Dead Man's Chest","Genre":"Adventure","Production Budget (millions)":"225","Box Office (millions)":"1066","ROI":"4.7","Rating IMDB":"7.3"},{"Movie":"Raiders of the Lost Ark","Genre":"Adventure","Production Budget (millions)":"18","Box Office (millions)":"390","ROI":"21.7","Rating IMDB":"8.7"},{"Movie":"Star Wars Ep. I: The Phantom Menace","Genre":"Adventure","Production Budget (millions)":"115","Box Office (millions)":"1027","ROI":"8.9","Rating IMDB":"6.5"},{"Movie":"The Chronicles of Narnia: The Lion, the Witch and the Wardrobe","Genre":"Adventure","Production Budget (millions)":"180","Box Office (millions)":"745","ROI":"4.1","Rating IMDB":"6.9"},{"Movie":"The Lion King","Genre":"Adventure","Production Budget (millions)":"45","Box Office (millions)":"968","ROI":"21.5","Rating IMDB":"8.4"},{"Movie":"Up","Genre":"Adventure","Production Budget (millions)":"175","Box Office (millions)":"735","ROI":"4.2","Rating IMDB":"8.3"}]},{"key":"Comedy","values":[{"Movie":"Ghostbusters","Genre":"Comedy","Production Budget (millions)":"144","Box Office (millions)":"229","ROI":"1.6","Rating IMDB":"7.8"}]},{"key":"Thriller/Suspense","values":[{"Movie":"The Hunger Games","Genre":"Thriller/Suspense","Production Budget (millions)":"78","Box Office (millions)":"649","ROI":"8.3","Rating IMDB":"7.2"},{"Movie":"Titanic","Genre":"Thriller/Suspense","Production Budget (millions)":"200","Box Office (millions)":"2187","ROI":"10.9","Rating IMDB":"7.6"}]},{"key":"Romantic Comedy","values":[{"Movie":"Zookeeper","Genre":"Romantic Comedy","Production Budget (millions)":"80","Box Office (millions)":"170","ROI":"2.1","Rating IMDB":"5.0"}]}];
+
+
+
+	var model = raw.model();
+
+	var group = model.dimension()
+		.title('Group')
+		.types(String)
+    .required(1)
+
+	var values = model.dimension()
+		.title('Size')
+		.types(Number)
+    .required(1)
+// console.log("here");
+// console.log(model);
+//   model.map(function(data){
+//     var nest = d3.nest()
+//       .key(function(d){console.log(d); return group(d)})
+//       .entries(data)
+//     return nest;
+//   })
+// console.log(model);
+
+  var chart = raw.chart()
+		.title("Box plot")
+		.description("A box-and-whisker plot uses simple glyphs that summarize a quantitative distribution with five standard statistics: the smallest value, lower quartile, median, upper quartile, and largest value.<br>Based on <a href='https://bl.ocks.org/mbostock/4061502'>https://bl.ocks.org/mbostock/4061502</a>")
+    .thumbnail("imgs/boxplot.png")
+    .category('Distribution')
+		.model(model)
+
+	var width = chart.number()
+		.title('Width')
+		.defaultValue(900)
+
+	var height = chart.number()
+		.title('Height')
+		.defaultValue(600)
+
+	var margin = chart.number()
+		.title('Margin')
+		.defaultValue(20)
+
+  var iqrValue = chart.number()
+    .title('Iqr')
+    .defaultValue(1.5)
+
+
+
+
+
+    var chartMargin = {top: margin(), right: margin(), bottom: margin(), left: margin()},
+        chartWidth = width() - chartMargin.left - chartMargin.right,
+        chartHeight = height() - chartMargin.top - chartMargin.bottom;
+
+    var boxplot = d3.box()
+        .whiskers(iqr(iqrValue()))
+        .height(chartHeight);
+
+  var container = d3.select("body").append("svg")
+     .attr("width", chartWidth + chartMargin.left + chartMargin.right)
+     .attr("height", chartHeight + chartMargin.top + chartMargin.bottom)
+     .append("g")
+     .attr("transform", "translate(" + chartMargin.left + "," + chartMargin.top + ")")
+
+   var max = d3.max(data, function(d) {
+     return d3.max(d.values, function(e){return +values(e)});
+   });
+
+   var min = d3.min(data, function(d) {
+     return d3.min(d.values, function(e){return +values(e)});
+   });
+
+   boxplot.domain([min, max]);
+
+   var x = d3.scale.ordinal()
+     .domain( data.map(function(d) { return d.key } ) )
+     .rangeRoundBands([0 , chartWidth], 0.75, 0.5);
+
+   var xAxis = d3.svg.axis()
+  		.scale(x)
+  		.orient("bottom");
+
+   var y = d3.scale.linear()
+   		.domain([min, max])
+   		.range([chartHeight, 0]);
+
+   var yAxis = d3.svg.axis()
+       .scale(y)
+       .tickSize(-chartWidth)
+       .orient("left");
+
+     // draw axis
+    container.append("g")
+         .attr("class", "x axis")
+         .style("stroke-width", "1px")
+          .style("font-size","10px")
+          .style("font-family","Arial, Helvetica")
+         .attr("transform", "translate(0," + chartHeight + ")")
+         .call(xAxis)
+
+       container.append("g")
+            .attr("class", "y axis")
+            .style("stroke-width", "1px")
+             .style("font-size","10px")
+             .style("font-family","Arial, Helvetica")
+            .call(yAxis)
+
+   var boxdata = data.map(function(d){
+     var output = d.values.map(function(e){return +values(e)})
+     return {key:d.key, values:output}
+   })
+
+  var gplot = container.selectAll(".box")
+       .data(boxdata)
+
+   gplot
+    .enter().append("g")
+     .attr("class", "box")
+    .attr("transform", function(d) {return "translate(" +  x(d.key)  + ",0)"; } )
+    .style("font-size","10px")
+    .style("font-family","Arial, Helvetica")
+    .call(function(d){
+      var data = d.data();
+      data = data.map(function(e){
+        return e.values
+      })
+      d.data(data)
+      boxplot.width(x.rangeBand())(d)
+    });
+
+    //styling
+
+    d3.selectAll('.box line, .box rect, .box circle')
+      .style("fill","#ccc")
+      .style("stroke","#000")
+
+    d3.selectAll('.box .center')
+      .style('stroke-dasharray', '3,3')
+
+    d3.selectAll('.box .outlier')
+      .style('fill', 'none')
+
+   d3.selectAll(".y.axis line, .x.axis line, .y.axis path, .x.axis path")
+     .style("shape-rendering","crispEdges")
+     .style("fill","none")
+     .style("stroke","#ccc")
+
+    function iqr(k) {
+      return function(d, i) {
+        var q1 = d.quartiles[0],
+            q3 = d.quartiles[2],
+            iqr = (q3 - q1) * k,
+            i = -1,
+            j = d.length;
+        while (d[++i] < q1 - iqr);
+        while (d[--j] > q3 + iqr);
+        return [i, j];
+      };
+    }
+
+</script>
+				 </body>
+				</html>

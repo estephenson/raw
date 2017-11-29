@@ -753,6 +753,8 @@ angular.module('raw.directives', [])
 		// element.find('textarea').val("SOME SILLY CODE HERE")
     	})
 */
+		/* This function extracts the d3 code for a specific chart when given the
+		title of the chart. */
 		var findFileFromName = function(name) {
 			var sep_strings = name.split(" ");
 			var first = sep_strings[0].toLowerCase();
@@ -765,18 +767,50 @@ angular.module('raw.directives', [])
 			return final;
 		}
 
-		//this is the method that will actually download the d3 code for us.
+		/* This function takes in a specific chart and its d3 code, and cleans
+		the code based on the type of chart. */
+		//ISSUE: these rely on whitespace. If the original code is changed (even to alter a space)
+		//this will no longer work
+		var replaceByName = function(chartName, data) {
+			console.log(chartName);
+			var toReplace = [];
+			var newText = [];
+			if (chartName == "Scatter Plot" || chartName == "Hexagonal Binning") {
+				// var regex = /^chart.draw.*$/m
+				toReplace = ["(function(){", "chart.draw(function (selection, data){", "selection", `	})
+
+			})();`]
+				newText = ["", "", `d3.select("body").append("svg")`, ""];
+			}
+			else if (chartName == "Box plot") {
+				toReplace = ["(function(){", "chart.draw(function(selection, data){", "selection", `  })
+
+
+
+				})();`]
+				newText = ["", "", `d3.select("body").append("svg")`, ""]
+			}
+
+			//loop through all replacements
+			for (var i=0; i<toReplace.length; i++) {
+				data = data.replace(toReplace[i], newText[i]);
+			}
+			return data;
+		}
+
+		/* This function downloads the generated HTML. */
 		var downloadD3 = function() {
-			//two main next steps: get the entire chart.js to print
 
 			var filename = findFileFromName(scope.chart.title());
 			var chartPath = "../charts/" + filename;
 			$.getScript(chartPath, function(data) {
-				var dataText = "var data = " + JSON.stringify(scope.data);
-				var dataModel = "var modelText = " + JSON.stringify(scope.model(scope.data));
-				var chartingFunction = data;
+				var dataModel = "var data = " + JSON.stringify(scope.model(scope.data));
+				// var chartingFunction = replaceByName(scope.chart.title(), data);
+				var chartingFunction = data.replace(/^\(function\(\){/, "");
+				var chartingFunction = chartingFunction.replace(/.*chart\.draw\(\s*function\s*\(\s*selection\s*/, "");
+				//chart.draw(function (selection, data){
 				var javascriptFunctions =
-					"\n" + dataText + ";\n\n" + dataModel + ";\n\n" + chartingFunction +"\n";
+					"\n" + dataModel + ";\n\n" + chartingFunction +"\n";
 
 				//create the HTML template
 				var htmlTemplate =
@@ -792,9 +826,7 @@ angular.module('raw.directives', [])
 					 <script src="http://www.science.smith.edu/~jcrouser/raw/lib/raw.js"></script>
 				 </head>
 				 <body>
-				 	<div class="chart" with="200" height="300" background-color="blue">
 				    <script>` + javascriptFunctions + `</script>
-					 </div>
 				 </body>
 				</html>`;
 

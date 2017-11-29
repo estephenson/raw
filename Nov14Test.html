@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+				<html>
+				 <head>
+				 <!-- This code assumes you have an internet connection. If you do not,
+				 you will need to replace the following two lines of code that begin with
+				 "script".
+				 Replace the first line with your local copy of the d3 library.
+				 Replace the second line with your local copy of raw.js. -->
+					 <!-- <script src="http://www.science.smith.edu/~jcrouser/raw/lib/raw.js"></script> -->
+					 <script type="text/javascript" src="bower_components/d3/d3.min.js"></script>
+					 <script type="text/javascript" src="bower_components/d3-plugins/hexbin/hexbin.js"></script>
+					 <script type="text/javascript" src="lib/raw.js"></script>
+
+				 </head>
+				 <body>
+				 	<div class="chart" with="200" height="300" background-color="blue">
+				    <script>
+			var data = [{"Movie":"Avatar","Genre":"Action","Production Budget (millions)":"237","Box Office (millions)":"2784","ROI":"11.7","Rating IMDB":"8.0"},{"Movie":"ET: The Extra-Terrestrial","Genre":"Drama","Production Budget (millions)":"11","Box Office (millions)":"793","ROI":"75.5","Rating IMDB":"7.9"},{"Movie":"Finding Nemo","Genre":"Adventure","Production Budget (millions)":"94","Box Office (millions)":"940","ROI":"10.0","Rating IMDB":"8.1"},{"Movie":"Ghostbusters","Genre":"Comedy","Production Budget (millions)":"144","Box Office (millions)":"229","ROI":"1.6","Rating IMDB":"7.8"},{"Movie":"Iron Man 3","Genre":"Action","Production Budget (millions)":"178","Box Office (millions)":"1215","ROI":"6.8","Rating IMDB":"7.6"},{"Movie":"Jurassic Park","Genre":"Action","Production Budget (millions)":"53","Box Office (millions)":"1030","ROI":"19.4","Rating IMDB":"8.0"},{"Movie":"King Kong","Genre":"Adventure","Production Budget (millions)":"207","Box Office (millions)":"551","ROI":"2.7","Rating IMDB":"7.3"},{"Movie":"Monsters, Inc.","Genre":"Adventure","Production Budget (millions)":"115","Box Office (millions)":"577","ROI":"5.0","Rating IMDB":"8.0"},{"Movie":"Oz the Great and Powerful","Genre":"Adventure","Production Budget (millions)":"160","Box Office (millions)":"493","ROI":"3.1","Rating IMDB":"6.6"},{"Movie":"Pirates of the Caribbean: Dead Man's Chest","Genre":"Adventure","Production Budget (millions)":"225","Box Office (millions)":"1066","ROI":"4.7","Rating IMDB":"7.3"},{"Movie":"Quantum of Solace","Genre":"Action","Production Budget (millions)":"200","Box Office (millions)":"586","ROI":"2.9","Rating IMDB":"6.7"},{"Movie":"Raiders of the Lost Ark","Genre":"Adventure","Production Budget (millions)":"18","Box Office (millions)":"390","ROI":"21.7","Rating IMDB":"8.7"},{"Movie":"Star Wars Ep. I: The Phantom Menace","Genre":"Adventure","Production Budget (millions)":"115","Box Office (millions)":"1027","ROI":"8.9","Rating IMDB":"6.5"},{"Movie":"The Blind Side","Genre":"Drama","Production Budget (millions)":"29","Box Office (millions)":"309","ROI":"10.7","Rating IMDB":"7.6"},{"Movie":"The Chronicles of Narnia: The Lion, the Witch and the Wardrobe","Genre":"Adventure","Production Budget (millions)":"180","Box Office (millions)":"745","ROI":"4.1","Rating IMDB":"6.9"},{"Movie":"The Dark Knight","Genre":"Action","Production Budget (millions)":"185","Box Office (millions)":"1005","ROI":"5.4","Rating IMDB":"9.0"},{"Movie":"The Hunger Games","Genre":"Thriller/Suspense","Production Budget (millions)":"78","Box Office (millions)":"649","ROI":"8.3","Rating IMDB":"7.2"},{"Movie":"The Lion King","Genre":"Adventure","Production Budget (millions)":"45","Box Office (millions)":"968","ROI":"21.5","Rating IMDB":"8.4"},{"Movie":"The Twilight Saga: New Moon","Genre":"Drama","Production Budget (millions)":"50","Box Office (millions)":"710","ROI":"14.2","Rating IMDB":"4.5"},{"Movie":"The Vow","Genre":"Drama","Production Budget (millions)":"30","Box Office (millions)":"196","ROI":"6.5","Rating IMDB":"6.7"},{"Movie":"The War of the Worlds","Genre":"Action","Production Budget (millions)":"132","Box Office (millions)":"704","ROI":"5.3","Rating IMDB":"6.5"},{"Movie":"Titanic","Genre":"Thriller/Suspense","Production Budget (millions)":"200","Box Office (millions)":"2187","ROI":"10.9","Rating IMDB":"7.6"},{"Movie":"Up","Genre":"Adventure","Production Budget (millions)":"175","Box Office (millions)":"735","ROI":"4.2","Rating IMDB":"8.3"},{"Movie":"X-Men: The Last Stand","Genre":"Action","Production Budget (millions)":"210","Box Office (millions)":"459","ROI":"2.2","Rating IMDB":"6.8"},{"Movie":"You've Got Mail","Genre":"Drama","Production Budget (millions)":"65","Box Office (millions)":"251","ROI":"3.9","Rating IMDB":"6.3"},{"Movie":"Zookeeper","Genre":"Romantic Comedy","Production Budget (millions)":"80","Box Office (millions)":"170","ROI":"2.1","Rating IMDB":"5.0"}];
+
+			var modelText = [{"x":237,"y":2784,"size":1,"color":null,"label":null},{"x":11,"y":793,"size":1,"color":null,"label":null},{"x":94,"y":940,"size":1,"color":null,"label":null},{"x":144,"y":229,"size":1,"color":null,"label":null},{"x":178,"y":1215,"size":1,"color":null,"label":null},{"x":53,"y":1030,"size":1,"color":null,"label":null},{"x":207,"y":551,"size":1,"color":null,"label":null},{"x":115,"y":577,"size":1,"color":null,"label":null},{"x":160,"y":493,"size":1,"color":null,"label":null},{"x":225,"y":1066,"size":1,"color":null,"label":null},{"x":200,"y":586,"size":1,"color":null,"label":null},{"x":18,"y":390,"size":1,"color":null,"label":null},{"x":115,"y":1027,"size":1,"color":null,"label":null},{"x":29,"y":309,"size":1,"color":null,"label":null},{"x":180,"y":745,"size":1,"color":null,"label":null},{"x":185,"y":1005,"size":1,"color":null,"label":null},{"x":78,"y":649,"size":1,"color":null,"label":null},{"x":45,"y":968,"size":1,"color":null,"label":null},{"x":50,"y":710,"size":1,"color":null,"label":null},{"x":30,"y":196,"size":1,"color":null,"label":null},{"x":132,"y":704,"size":1,"color":null,"label":null},{"x":200,"y":2187,"size":1,"color":null,"label":null},{"x":175,"y":735,"size":1,"color":null,"label":null},{"x":210,"y":459,"size":1,"color":null,"label":null},{"x":65,"y":251,"size":1,"color":null,"label":null},{"x":80,"y":170,"size":1,"color":null,"label":null}];
+
+			/*The issue currently at hand is that while I can get things like chart.title() to
+			come up with the correct response on the command line, there doesn't seem to be any kind
+			of execution of the functions. chart.draw() displays the correct thing, but doesn't
+			actually draw anything. Similarly, calling points in the inspector returns the points
+			function of raw, not the points object we're trying to create here.
+			Data and modelText are known to the inspector.
+
+			If the (function(){ is uncommented, nothing at all gets executed - the console.logs
+			display, but none of the functionality is there. */
+
+			// (function(){
+				console.log("beginning of file");
+				var points = raw.models.points();
+
+				points.dimensions().remove('size');
+				points.dimensions().remove('label');
+				points.dimensions().remove('color');
+
+				var chart = raw.chart()
+					.title('Hexagonal Binning')
+					.description(
+						"Visually clusters the most populated areas on a scatterplot. Useful to make more readable a scatterplot when plotting hundreds of points.<br/>Based on <a href='http://bl.ocks.org/mbostock/4248145'>http://bl.ocks.org/mbostock/4248145</a>")
+					.thumbnail("imgs/binning.png")
+				    .category('Dispersion')
+					.model(points)
+
+				var width = chart.number()
+					.title("Width")
+					.defaultValue(1000)
+					.fitToWidth(true)
+
+				var height = chart.number()
+					.title("Height")
+					.defaultValue(500)
+
+				var radius = chart.number()
+					.title("Radius")
+					.defaultValue(20)
+
+				var useZero = chart.checkbox()
+					.title("Set origin at (0,0)")
+					.defaultValue(false)
+
+				var colors = chart.color()
+					 .title("Color scale")
+
+				var showPoints = chart.checkbox()
+					.title("Show points")
+					.defaultValue(true)
+
+				// chart.draw(function (selection, data){
+					console.log("beginning of draw");
+					// Retrieving dimensions from model
+					var x = points.dimensions().get('x'),
+						y = points.dimensions().get('y');
+
+					// var g = selection
+					var g = d3.select("body")
+						.append("svg")
+						.attr("width", +width() )
+						.attr("height", +height() )
+						.append("g")
+
+					var marginLeft = d3.max(data, function (d) { return (Math.log(d.y) / 2.302585092994046) + 1; }) * 9,
+						marginBottom = 20,
+						w = width() - marginLeft,
+						h = height() - marginBottom;
+
+					var xExtent = !useZero()? d3.extent(data, function (d){ return d.x; }) : [0, d3.max(data, function (d){ return d.x; })],
+						yExtent = !useZero()? d3.extent(data, function (d){ return d.y; }) : [0, d3.max(data, function (d){ return d.y; })];
+
+					var xScale = x.type() == "Date"
+							? d3.time.scale().range([marginLeft,width()]).domain(xExtent)
+							: d3.scale.linear().range([marginLeft,width()]).domain(xExtent),
+						yScale = y.type() == "Date"
+							? d3.time.scale().range([h, 0]).domain(yExtent)
+							: d3.scale.linear().range([h, 0]).domain(yExtent),
+						xAxis = d3.svg.axis().scale(xScale).tickSize(-h).orient("bottom"),
+			    		yAxis = d3.svg.axis().scale(yScale).ticks(10).tickSize(-w).orient("left");
+
+					var hexbin = d3.hexbin()
+					    .size([w, h])
+					    .x(function(d){ return xScale(d.x); })
+					    .y(function(d){ return yScale(d.y); })
+					    .radius(+radius());
+
+					var xAxis = d3.svg.axis()
+					    .scale(xScale)
+					    .orient("bottom")
+					    .tickSize(6, -h);
+
+					var yAxis = d3.svg.axis()
+					    .scale(yScale)
+					    .orient("left")
+					    .tickSize(6, -w);
+
+					g.append("clipPath")
+					    .attr("id", "clip")
+					  	.append("rect")
+						    .attr("class", "mesh")
+						   //  .attr("width", w)
+						    .attr("height", h)
+						   //  .attr("transform", "translate(" + marginLeft + ",1)");
+							//it doesn't know what translate is?
+
+					colors.domain(hexbin(data), function (d){ return d.length; });
+
+					g.append("g")
+					    .attr("clip-path", "url(#clip)")
+					  	.selectAll(".hexagon")
+					    .data(hexbin(data))
+					  	.enter().append("path")
+						    .attr("class", "hexagon")
+						    .attr("d", hexbin.hexagon())
+						   //  .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+						   //  .style("fill", function(d) { return colors()(d.length); })
+						    .attr("stroke","#000")
+						    .attr("stroke-width",".5px")
+
+					var point = g.selectAll("g.point")
+						.data(data)
+						.enter().append("g")
+							.attr("class","point")
+
+					point.append("circle")
+					  	.filter(function(){ return showPoints(); })
+					    .style("fill", "#000")
+					    .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
+					    .attr("r", 1);
+
+					g.append("g")
+					    .attr("class", "y axis")
+					    .attr("transform", "translate(" + marginLeft + ",0)")
+					    .call(yAxis);
+
+					g.append("g")
+					    .attr("class", "x axis")
+					    .attr("transform", "translate(0," + h + ")")
+					    .call(xAxis);
+
+					g.selectAll(".axis")
+						.selectAll("text")
+						.style("font","10px Arial, Helvetica")
+
+					g.selectAll(".axis")
+						.selectAll("path")
+						.style("fill","none")
+						.style("stroke","#000000")
+						.style("shape-rendering","crispEdges")
+
+					g.selectAll(".axis")
+						.selectAll("line")
+						.style("fill","none")
+						.style("stroke","#000000")
+						.style("shape-rendering","crispEdges")
+				// })
+				console.log("EOF");
+
+				function myfunction() {
+					console.log("hey");
+				}
+				myfunction();
+			// })();
+
+</script>
+					 </div>
+				 </body>
+				</html>
