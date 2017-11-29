@@ -805,10 +805,17 @@ angular.module('raw.directives', [])
 			var chartPath = "../charts/" + filename;
 			$.getScript(chartPath, function(data) {
 				var dataModel = "var data = " + JSON.stringify(scope.model(scope.data));
-				var chartingFunction = replaceByName(scope.chart.title(), data);
-				// var chartingFunction = data.replace(/^\(function\(\){/, "");
-				// var chartingFunction = chartingFunction.replace(/.*chart\.draw\(\s*function\s*\(\s*selection\s*/, "");
-				//chart.draw(function (selection, data){
+				// var chartingFunction = replaceByName(scope.chart.title(), data);
+				var chartingFunction = data.replace(/^\(function\(\){/, "");
+				var chartingFunction = chartingFunction.replace(/.*chart\.draw\(\s*function\s*\(\s*selection\s*\,\s*data\s*\){/, "");
+				//also need to replace Selection
+				var chartingFunction = chartingFunction.replace("selection", `d3.select("body").append("svg")`);
+				var chartingFunction = chartingFunction.replace(/\s*}\)\s*}\)\(\);/, "");
+				/*
+			})
+
+})();
+				*/
 				var javascriptFunctions =
 					"\n" + dataModel + ";\n\n" + chartingFunction +"\n";
 
