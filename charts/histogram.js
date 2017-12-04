@@ -43,50 +43,54 @@
         selection
             .attr("width", +width() - margin.left - margin.right)
             .attr("height", +height() - margin.bottom);
+            
         g = selection.append("g");
         var widthNum = +width() - margin.left - margin.right;
         var heightNum = +height() - margin.top - margin.bottom;
         var formatCount = d3.format(",.0f"); 
         
-        var x = d3.scaleLinear().domain([0, d3.max(data, function (d){ return d.key; })]).range([0, widthNum]);
+        var x = d3.scale.linear().domain([0, d3.max(data, function (d){ return d.key; })]).range([0, widthNum]);
         
 
-        var bins = d3.histogram()
-            .domain(x.domain())
-            .thresholds(+ticks())
+        var bins = d3.layout.histogram()
+            .bins(x.ticks(+ticks()))
             (data.map(function(d){
                 return d.key;
             }))
         
         
-        var y = d3.scaleLinear().domain([0, d3.max(bins, function(d) { return d.length; })]).range([(heightNum - 20), 0]);
-
-        var bar = g.selectAll(".bar")
-            .data(bins)
-            .enter().append("g")
-            .attr("class", "bar")
-            .attr("transform", function(d) {return "translate(" + x(d.x0) + "," + (y(d.length))  + ")"; });
+        var y = d3.scale.linear().domain([d3.min(bins, function(d) { return d.y; }), d3.max(bins, function(d) { return d.y; })]).range([(heightNum - 20), 0]);
+		
+		var xAxis = d3.svg.axis()
+			.scale(x)
+			.orient("bottom");
+    
+       var bar = g.selectAll(".bar")
+					.data(bins)
+				  .enter().append("g")
+					.attr("class", "bar")
+					.attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
         
 
         bar.append("rect")
             .attr("x", 1)
-            .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
-            .attr("height", function(d) { return heightNum - 20 - y(d.length); })
+            .attr("width", (x(bins[0].dx) - x(0)) - 1)
+            .attr("height", function(d) { return heightNum - 20 - y(d.y); })
             .style("fill", "steelblue");
 
         bar.append("text")
             .attr("dy", ".75em")
             .attr("y", 6)
-            .attr("x", (x(bins[0].x1) - x(bins[0].x0)) / 2)
+            .attr("x", (x(bins[0].dx) - x(0)) / 2)
             .attr("text-anchor", "middle")
-            .text(function(d) { return formatCount(d.length); })
+            .text(function(d) { return formatCount(d.y); })
             .style("fill", "#fff")
             .style("font", "10px sans-serif");
         
         g.append("g")
-            .attr("class", "axis axis--x")
-            .attr("transform", "translate(0," + (heightNum - 20)+ ")")
-            .call(d3.axisBottom(x));
+            .attr("class", "x axis")
+			.attr("transform", "translate(0," + heightNum + ")")
+			.call(xAxis);
         })
 
 }()
