@@ -832,7 +832,7 @@ angular.module('raw.directives', [])
     		{ label : 'Vector graphics (svg)', download : downloadSvg },
     		{ label : 'Image (png)', download : downloadPng },
     		{ label : 'Data model (json)', download : downloadData },
-			{ label: 'HTML', download : downloadD3 }
+			{ label: 'HTML/JS', download : downloadD3 }
     	]
 
     }
