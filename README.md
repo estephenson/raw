@@ -1,3 +1,5 @@
+To learn more about this repository, head over to the wiki! This readme is for the official rawgraphs project.
+
 ![raw header](imgs/raw_header.jpg)
 
 ## About
